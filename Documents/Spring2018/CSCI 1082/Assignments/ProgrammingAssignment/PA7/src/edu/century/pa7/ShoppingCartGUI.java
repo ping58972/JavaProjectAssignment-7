@@ -77,7 +77,7 @@ public class ShoppingCartGUI extends JFrame implements ActionListener {
 		fl_panelClicks.setHgap(10);
 		contentPane.add(panelClicks, BorderLayout.NORTH);
 		//create the text fields.
-		textFieldFileName = new JTextField();
+		textFieldFileName = new JTextField("products.csv");
 		panelClicks.add(textFieldFileName);
 		textFieldFileName.setColumns(10);
 		//
@@ -165,7 +165,38 @@ public class ShoppingCartGUI extends JFrame implements ActionListener {
 	//Method for choice the options of sorting data. 
 	private void sortFile() {
 		if(productList==null) {
-			textArea_L.append("Prease! Browse a File first!\n");
+			//textArea_L.append("Prease! Browse a File first!\n");
+			productList = new ArrayList<Product>();
+			try{
+				Scanner read = new Scanner(new File("products.csv"));	
+					while(read.hasNextLine()) {
+						product = new Product();
+						String data = read.nextLine();
+						String [] sprit = data.split(", ");
+						product.setUid(Integer.parseInt(sprit[0]));
+						product.setPrice(Double.parseDouble(sprit[1]));
+						product.setName(sprit[2]);
+						product.setDescription(sprit[3]);					
+						textArea_L.append(product.toString()+"\n");
+						productList.add(product);
+					}
+				read.close();
+				//textFieldFileName.setText(file.getName());
+			}catch(FileNotFoundException e) {			
+				e.printStackTrace();
+			}
+			if(comboBox.getSelectedItem().toString().equals("ID")) {
+				saveFile("SortIDFile.csv", Product.CompareById);
+			}
+			if(comboBox.getSelectedItem().toString().equals("PRICE")) {
+				saveFile("SortPriceFile.csv", Product.CompareByPrice);
+			}
+			if(comboBox.getSelectedItem().toString().equals("DESCRIPTION")) {
+				saveFile("SortDescriptionFile.csv", Product.CompareByDescription);
+			}
+			if(comboBox.getSelectedItem().toString().equals("NAME")) {
+				saveFile("SortNameFile.csv", Product.CompareByName);			
+			}
 		}else {
 			if(comboBox.getSelectedItem().toString().equals("ID")) {
 				saveFile("SortIDFile.csv", Product.CompareById);
